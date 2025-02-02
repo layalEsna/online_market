@@ -13,6 +13,7 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-cors = "*"
 sqlalchemy-serializer = "*"
+bcrypt = "*"
 
 [requires]
 python_full_version = "3.8.13"

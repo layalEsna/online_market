@@ -2,6 +2,8 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from config import db
+from config import bcrypt
+import re
 
 # Models go here!
 
@@ -12,7 +14,22 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String(50), unique=True, nullable=False)
     _hash_password = db.Column(db.String(128), nullable=False)
 
+    @property
+    def password(self):
+        raise ArithmeticError('password is read only')
+    
+    @password.setter
+    def password(self, password):
+        pattern = re.compile(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*]).{8,}$')
+        if not password or not isinstance(password, str):
+            raise ValueError('password is required and must be a string')
+        if not password.match(pattern):
+            raise ValueError('password must be at least 8 charachters and includes at least one upper case, one lower case letter and one symbols')
+        self._hash_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self._hash_password, password)
+    
 class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'
 
@@ -32,3 +49,4 @@ class Purchase(db.Model, SerializerMixin):
     quantity = db.Column(db.Integer, nullable=False, default=1)
     delivery_address = db.Column(db.String(255), nullable=False)
     payment_method = db.Column(db.String(50), nullable=False)
+
