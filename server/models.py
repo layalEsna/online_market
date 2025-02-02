@@ -1,6 +1,7 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
-
+from flask import Flask, request, jsonify, make_response
+from sqlalchemy.orm import validates, relationship
 from config import db, bcrypt
 
 import re
@@ -30,6 +31,14 @@ class User(db.Model, SerializerMixin):
     def check_password(self, password):
         return bcrypt.check_password_hash(self._hash_password, password)
     
+    @validates('username')
+    def validate_username(self,key, username):
+        if not username or not isinstance(username, str):
+            raise ValueError('Username is required and must be a string.')
+        if len(username) < 5 or len(username) > 50:
+            raise ValueError('Username must be between 5 and 50 characters inclusive.')
+        return username
+        
 class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'
 
