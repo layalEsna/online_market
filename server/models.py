@@ -38,6 +38,8 @@ class User(db.Model, SerializerMixin):
         if len(username) < 5 or len(username) > 50:
             raise ValueError('Username must be between 5 and 50 characters inclusive.')
         return username
+    
+    serialize_only = ('id', 'username')
         
 class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'
