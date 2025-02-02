@@ -1,8 +1,8 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from config import db
-from config import bcrypt
+from config import db, bcrypt
+
 import re
 
 # Models go here!
@@ -23,7 +23,7 @@ class User(db.Model, SerializerMixin):
         pattern = re.compile(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*]).{8,}$')
         if not password or not isinstance(password, str):
             raise ValueError('password is required and must be a string')
-        if not password.match(pattern):
+        if not pattern.match(password):
             raise ValueError('password must be at least 8 charachters and includes at least one upper case, one lower case letter and one symbols')
         self._hash_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
