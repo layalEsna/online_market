@@ -10,6 +10,7 @@ import re
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
+    serialize_only = ('id', 'username')
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -25,7 +26,7 @@ class User(db.Model, SerializerMixin):
         if not password or not isinstance(password, str):
             raise ValueError('password is required and must be a string')
         if not pattern.match(password):
-            raise ValueError('password must be at least 8 charachters and includes at least one upper case, one lower case letter and one symbols')
+            raise ValueError('password must be at least 8 characters and includes at least one upper case, one lower case letter and one symbol')
         self._hash_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
@@ -39,7 +40,7 @@ class User(db.Model, SerializerMixin):
             raise ValueError('Username must be between 5 and 50 characters inclusive.')
         return username
     
-    serialize_only = ('id', 'username')
+    
         
 class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'
