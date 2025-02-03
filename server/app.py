@@ -78,9 +78,32 @@ class Signup(Resource):
             return make_response(jsonify(new_user.to_dict()), 201)
 
         except Exception as e:
-            return make_response(jsonify(f'Internal Error: {e}'), 500)
+            return make_response(jsonify({'error': f'Internal error: {e}'}), 500)
+        
+class Login(Resource):
+    def post(self):
+
+        try:
+            data = request.get_json()
+            username = data.get('username')
+            password = data.get('password')
+
+            if not all([username, password]):
+                return make_response(jsonify({'error': 'All the fields are required.'}),400)
+            user = User.query.filter(User.username==username).first()
+            if not user or not user.check_password(password):
+                return make_response(jsonify({'error': 'Wrong username or password.'}), 404)
+            
+            session['user_id'] = user.id
+            
+            return make_response(jsonify({'message': 'Successful login!'}), 200)
+
+        except Exception as e:
+            return make_response(jsonify({'error': f'Internal error: {e}'}), 500)
+
         
 api.add_resource(Signup, '/signup')
+api.add_resource(Login, '/login')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
