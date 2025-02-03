@@ -2,8 +2,11 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from flask import Flask, request, jsonify, make_response
 from sqlalchemy.orm import validates, relationship
-from config import db, bcrypt
+# from config import db, bcrypt
+from server.config import db, bcrypt
+from sqlalchemy import Column, Integer, String
 
+# db.init_app(app)
 import re
 
 # Models go here!
@@ -15,6 +18,8 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
     _hash_password = db.Column(db.String(128), nullable=False)
+
+    user_products = db.relationship('UserProduct', back_populates='user', cascade='all,delete-orphan')
 
     @property
     def password(self):
@@ -44,6 +49,7 @@ class User(db.Model, SerializerMixin):
         
 class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'
+    serialize_only = ('id', 'name', 'description', 'image', 'price')
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(50), nullable=False)
@@ -51,9 +57,13 @@ class Product(db.Model, SerializerMixin):
     image = db.Column(db.String)
     price = db.Column(db.Numeric(10,2), nullable=False)
 
+    user_products = db.relationship('UserProduct', back_populates='product', cascade='all,delete-orphan')
 
-class Purchase(db.Model, SerializerMixin):
-    __tablename__ = 'purchases'
+
+class UserProduct(db.Model, SerializerMixin):
+    __tablename__ = 'user_products'
+    serialize_only = ('id', 'user_id', 'product_id', 'quantity', 'delivery_address', 'payment_method')
+
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -61,4 +71,6 @@ class Purchase(db.Model, SerializerMixin):
     quantity = db.Column(db.Integer, nullable=False, default=1)
     delivery_address = db.Column(db.String(255), nullable=False)
     payment_method = db.Column(db.String(50), nullable=False)
-
+    
+    user = db.relationship('User', back_populates='user_products')
+    product = db.relationship('Product', back_populates='user_products')  
