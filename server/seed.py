@@ -13,6 +13,9 @@ from faker import Faker
 from server import app
 # from server.models import db
 
+from decimal import Decimal
+
+
 from server.models import db, User, Product, UserProduct
 
 if __name__ == '__main__':
@@ -33,7 +36,18 @@ if __name__ == '__main__':
         db.session.commit()
         print (f'Seeded {len(users)} users successfully!')
 
+        products = [Product(
+            name = fake.name(),
+            description = fake.text(),
+            image = fake.image_url(),
+            price = Decimal(fake.random_number(digits=5)),
+            
+        )for _ in range(6)
+        ]
 
+        db.session.add_all(products)
+        db.session.commit()
+        print (f'Seeded {len(products)} products successfully!')
 
 
 
