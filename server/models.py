@@ -6,6 +6,8 @@ from sqlalchemy.orm import validates, relationship
 from server.config import db, bcrypt
 from sqlalchemy import Column, Integer, String
 
+from decimal import Decimal
+
 # db.init_app(app)
 import re
 
@@ -83,8 +85,8 @@ class Product(db.Model, SerializerMixin):
     
     @validates('price')
     def validate_price (self, key, price ):
-        if not price or not isinstance(price, (int, float)) or price <= 0:
-            raise ValueError('Price must be a positive float.')
+        if not price or not isinstance(price, (int, float, Decimal)) or price <= 0:
+            raise ValueError('Price must be a positive number (int, float, or Decimal).')
         return price 
     
 

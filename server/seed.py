@@ -40,7 +40,7 @@ if __name__ == '__main__':
             name = fake.name(),
             description = fake.text(),
             image = fake.image_url(),
-            price = Decimal(fake.random_number(digits=5)),
+            price = Decimal(fake.random_number(digits=5))/Decimal('100.0'),
             
         )for _ in range(6)
         ]
@@ -64,7 +64,7 @@ if __name__ == '__main__':
         db.session.add_all(user_products)
         db.session.commit()
 
-        print (f'Sedded {len(user_products)} user_products successfully!')
+        print (f'Seeded {len(user_products)} user_products successfully!')
 
 
 
