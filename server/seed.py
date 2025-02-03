@@ -3,6 +3,9 @@
 # Standard library imports
 from random import randint, choice as rc
 
+# from server.config import bcrypt
+from server.config import bcrypt
+
 # Remote library imports
 from faker import Faker
 
@@ -18,53 +21,21 @@ if __name__ == '__main__':
     # Ensure the app context is pushed
     with app.app_context():
         print("Starting seed...")
+        UserProduct.query.delete()
+        Product.query.delete()
+        User.query.delete()
 
-        # Drop all tables (if you want to reset the database)
-#         db.drop_all()
+        users = [
+            User(username=fake.user_name(), _hash_password = bcrypt.generate_password_hash(fake.password()).decode('utf-8'))
+            for _ in range(3)
+        ]
+        db.session.add_all(users)
+        db.session.commit()
+        print (f'Seeded {len(users)} users successfully!')
 
-#         # Create all tables (based on models)
-#         db.create_all()
 
-#         # Adding users
-#         for _ in range(5):
-#             user = User(
-#                 username=fake.user_name(),
-#                 _hash_password=fake.password()  
-#             )
-#             db.session.add(user)
 
-#         db.session.commit()
 
-#         users = User.query.all()
-
-#         # Adding products
-#         for _ in range(10):
-#             product = Product(
-#                 name=fake.word(),
-#                 description=fake.text(),
-#                 price=round(randint(10, 1000) * 0.99, 2),
-#                 user_id=rc(users).id  
-#             )
-#             db.session.add(product)
-
-#         db.session.commit()
-
-#         products = Product.query.all()
-
-#         # Adding purchases
-#         for _ in range(5):
-#             purchase = Purchase(
-#                 user_id=rc(users).id,  
-#                 product_id=rc(products).id, 
-#                 quantity=randint(1, 3),
-#                 delivery_address=fake.address(),
-#                 payment_method=rc(['Credit Card', 'Paypal', 'Cash on Delivery'])
-#             )
-#             db.session.add(purchase)
-
-#         db.session.commit()
-
-#         print("Seed data added successfully!")
 
 
 # # #!/usr/bin/env python3
