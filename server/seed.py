@@ -48,7 +48,8 @@ if __name__ == '__main__':
         db.session.add_all(products)
         db.session.commit()
         print (f'Seeded {len(products)} products successfully!')
-
+        
+        
 
 
 

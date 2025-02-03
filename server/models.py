@@ -58,7 +58,35 @@ class Product(db.Model, SerializerMixin):
     price = db.Column(db.Numeric(10,2), nullable=False)
 
     user_products = db.relationship('UserProduct', back_populates='product', cascade='all,delete-orphan')
-
+    
+    @validates('name')
+    def validate_name(self, key, name):
+        if not name or not isinstance(name, str):
+            raise ValueError('Name is required and must be a string.')
+        if len(name) > 50:
+            raise ValueError('Name must be shorter than 50 characters.')
+        return name
+    
+    @validates('description')
+    def validate_description(self, key, description):
+        if not description or not isinstance(description, str):
+            raise ValueError('Description is required and must be a string.')
+        if len(description) > 200:
+            raise ValueError('Description must be shorter than 200 characters.')
+        return description
+    
+    @validates('image')
+    def validate_image(self, key, image):
+        if image is not None and not isinstance(image, str):
+            raise ValueError('Image must be a string.')
+        return image
+    
+    @validates('price')
+    def validate_price (self, key, price ):
+        if not price or not isinstance(price, (int, float)) or price <= 0:
+            raise ValueError('Price must be a positive float.')
+        return price 
+    
 
 class UserProduct(db.Model, SerializerMixin):
     __tablename__ = 'user_products'
