@@ -102,3 +102,21 @@ class UserProduct(db.Model, SerializerMixin):
     
     user = db.relationship('User', back_populates='user_products')
     product = db.relationship('Product', back_populates='user_products')  
+
+    @validates('quantity')
+    def validate_quantity(self, key, quantity):
+        if not isinstance(quantity, int) or quantity <= 0:
+            raise ValueError('Quantity must be a positive integer.')
+        return quantity
+    
+    @validates('delivery_address')
+    def validate_delivery_address(self, key, delivery_address):
+        if not delivery_address or not isinstance(delivery_address, str) or len(delivery_address) > 255:
+            raise ValueError('Delivery address is required and must be a string and less than 255 characters.')
+        return delivery_address
+    
+    @validates('payment_method')
+    def validate_payment_method(self, key, payment_method):
+        if not payment_method or not isinstance(payment_method, str) or len(payment_method) > 50:
+            raise ValueError('Payment method is required and must be a string and less than 50 characters.')
+        return payment_method
