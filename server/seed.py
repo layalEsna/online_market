@@ -49,7 +49,22 @@ if __name__ == '__main__':
         db.session.commit()
         print (f'Seeded {len(products)} products successfully!')
         
-        
+        user_products = [
+            UserProduct(
+                user_id = rc(users).id,
+                product_id = rc(products).id,
+                quantity = randint(1,4),
+                delivery_address = fake.address(),
+                payment_method = rc(['Credit Card', 'PayPal', 'Bank Transfer'])
+
+            )
+            for _ in range(6)
+        ]
+
+        db.session.add_all(user_products)
+        db.session.commit()
+
+        print (f'Sedded {len(user_products)} user_products successfully!')
 
 
 
