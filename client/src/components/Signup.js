@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import React from 'react'
 import { useFormik } from 'formik'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
@@ -32,6 +32,26 @@ function Signup() {
 
         }),
         onSubmit: (values => {
+            fetch('http://127.0.0.1:5555/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(values)
+
+            })
+                .then(res => {
+                    if (!res.ok) {
+                    throw new Error('Failed to signup.')
+                    }
+                    return res.json()
+            })
+                .then(data => {
+                console.log(data)
+            })
+                .catch(e => {
+                console.error(`Internal error: ${e}`)
+            })
         
         })
     })

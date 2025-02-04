@@ -48,7 +48,7 @@ api.init_app(app)
 # Start your views and routes
 @app.route('/')
 def index():
-    return '<h1>Project Server</h1>'
+    return '<h1>Project Server here</h1>'
 
 class Signup(Resource):
     def post(self):
@@ -95,7 +95,7 @@ class Login(Resource):
                 return make_response(jsonify({'error': 'Wrong username or password.'}), 404)
             
             session['user_id'] = user.id
-            
+
             return make_response(jsonify({'message': 'Successful login!'}), 200)
 
         except Exception as e:
