@@ -3,10 +3,6 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Signup from "./Signup";
 
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Signup from "./Signup";
-
 function App() {
   return (
     <Router>
