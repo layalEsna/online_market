@@ -49,7 +49,7 @@ function Signup() {
                     return res.json()
             })
                 .then(data => {
-                navigate('/online_market')
+                navigate('/sellers')
             })
                 .catch(e => {
                     setErrorMessage(e.message)

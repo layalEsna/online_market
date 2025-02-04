@@ -53,7 +53,7 @@ function Login() {
             
             
                 .then(() => {
-                navigate('/online_market')
+                navigate('/sellers')
             })
                 .catch(e => {
                     setErrorMessage(e.message)
