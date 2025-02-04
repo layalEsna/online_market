@@ -100,10 +100,38 @@ class Login(Resource):
 
         except Exception as e:
             return make_response(jsonify({'error': f'Internal error: {e}'}), 500)
-
         
+class Sellers(Resource):
+    def get(self):
+
+        sellers = User.query.all()
+        if not sellers:
+            return make_response(jsonify({'count': 0, 'sellers': []}), 200)
+
+        sellers_with_products = [
+            {
+                'id': seller.id,
+                'username': seller.username,
+                'products': [
+                    {
+                        'id': product.product.id,
+                        'name': product.product.name,
+                        'description': product.product.description,
+                        'image': product.product.image,
+                        'price': product.product.price
+                    }
+                    for product in seller.user_products
+                ]            
+            }
+             for seller in sellers
+        ]
+
+        return make_response(jsonify({'count': len(sellers_with_products), 'sellers': sellers_with_products}), 200)
+
+       
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
+api.add_resource(Sellers, '/sellers')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
