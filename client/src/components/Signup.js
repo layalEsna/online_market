@@ -1,11 +1,13 @@
 
-import React from 'react'
+import React, {useState} from 'react'
 import { useFormik } from 'formik'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
 
 function Signup() {
+
+    const [errorMessage, setErrorMessage] = useState('')
 
     const navigate = useNavigate()
 
@@ -47,10 +49,11 @@ function Signup() {
                     return res.json()
             })
                 .then(data => {
-                console.log(data)
+                navigate('/online_market')
             })
                 .catch(e => {
-                console.error(`Internal error: ${e}`)
+                    setErrorMessage(e.message)
+                console.error(`Internal error: ${e.message}`)
             })
         
         })
@@ -58,6 +61,57 @@ function Signup() {
 
     return (
         <div>
+            <h1>Create an Acount</h1>
+
+            <form onSubmit={formik.handleSubmit}>
+                <div>
+                    <label htmlFor='username'>user name:</label>
+                    <input
+                        id='username'
+                        type='text'
+                        name='username'
+                        value={formik.values.username}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    />
+                    {formik.errors.username && formik.touched.username && (
+                        <div>{ formik.errors.username }</div>
+                    )}
+                </div>
+                <div>
+                    <label htmlFor='password'>password:</label>
+                    <input
+                        id='password'
+                        type='password'
+                        name='password'
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    />
+                    {formik.errors.password && formik.touched.password && (
+                        <div>{ formik.errors.password }</div>
+                    )}
+                </div>
+                <div>
+                    <label htmlFor='confirm_password'>confirm password:</label>
+                    <input
+                        id='confirm_password'
+                        type='password'
+                        name='confirm_password'
+                        value={formik.values.confirm_password}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    />
+                    {formik.errors.confirm_password && formik.touched.confirm_password && (
+                        <div>{ formik.errors.confirm_password }</div>
+                    )}
+                </div>
+                <div>
+                    <button type='submit'>signup</button>
+                </div>
+
+            </form>
+            {errorMessage && <div>{ errorMessage }</div>}
 
         </div>
     )
