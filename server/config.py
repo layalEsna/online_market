@@ -41,19 +41,19 @@
 
 # SECRET_KEY = os.getenv('SECRET_KEY')
 
-
+# load_dotenv
 # config.py
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask import Flask
-from flask_cors import CORS
+# ##### changes -> remove : from flask_cors import CORS move it to app.py
 from flask_restful import Api
 from sqlalchemy import MetaData
 import os
-from dotenv import load_dotenv
+####### from dotenv import load_dotenv -> move to app.py
 
-load_dotenv()
+######## load_dotenv() -> move to app.py
 
 # Instantiate db, bcrypt, etc.
 db = SQLAlchemy(metadata=MetaData(naming_convention={
@@ -62,8 +62,11 @@ db = SQLAlchemy(metadata=MetaData(naming_convention={
 migrate = Migrate()
 bcrypt = Bcrypt()
 api = Api()
-CORS = CORS
-
+# CORS = CORS
+# CORS(app)
 # Load your secret key and database URI
-SECRET_KEY = os.getenv('SECRET_KEY')
+########SECRET_KEY = os.getenv('SECRET_KEY') since i have it in app.py
+
+# ###### changes -> # CORS = CORS -> CORS(app) line 66
+# ##### remove  CORS(app) add it in app.py
 

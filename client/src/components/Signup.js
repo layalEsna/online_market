@@ -8,7 +8,7 @@ import * as Yup from 'yup'
 function Signup() {
 
     const [errorMessage, setErrorMessage] = useState('')
-
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
     const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*]).{8,}$/
@@ -36,9 +36,11 @@ function Signup() {
         onSubmit: (values => {
             fetch('http://127.0.0.1:5555/signup', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                
                 body: JSON.stringify(values)
 
             })
@@ -49,12 +51,31 @@ function Signup() {
                     return res.json()
             })
                 .then(data => {
+                    setLoading(false)
                 navigate('/sellers')
-            })
+                })
                 .catch(e => {
-                    setErrorMessage(e.message)
-                console.error(`Internal error: ${e.message}`)
+                    setLoading(false)
+                    if (e.message === 'Failed to fetch') {
+                        setErrorMessage('Network error or server not running. Please check the server.')
+                    } else {
+                        setErrorMessage(e.message)
+                    }
+                    console.error(`Error: ${e.message}`)
             })
+                // .catch(e => {
+                //     if (e.message === 'Failed to fetch') {
+                //         setErrorMessage('Network error or server not running. Please check the server.');
+                //     } else {
+                //         setErrorMessage(e.message); // This will capture any specific error message
+                //     }
+                //     console.error(`Error: ${e.message}`);
+                // })
+                
+            //     .catch(e => {
+            //         setErrorMessage(e.message)
+            //     console.error(`Internal error: ${e.message}`)
+            // })
         
         })
     })

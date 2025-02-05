@@ -1,36 +1,26 @@
-# #!/usr/bin/env python3
-
-# # Standard library imports
-# # db.init_app(app)
-# # Remote library imports
-# from flask import request
-# from flask_restful import Resource
-
-# # Local imports
-# from .config import app, db, api, migrate
-# # Add your model imports
-
-
-
-# # Views go here!
-
-# @app.route('/')
-# def index():
-#     return '<h1>Project Server</h1>'
-
-
-# if __name__ == '__main__':
-#     app.run(port=5555, debug=True)
-
-
+# load_dotenv
+# CORS = CORS
 # app.py
 from flask import Flask, request, make_response, jsonify, session
 from flask_restful import Resource
+from dotenv import load_dotenv
 import os
+load_dotenv()
 from server.config import db, migrate, api, bcrypt
 from server.models import *  
 
+######
+from flask_cors import CORS
+
 app = Flask(__name__)
+
+######
+######CORS(app) -> replace with
+######CORS(app, resources={r"/api/*": {"origins": "*"}}) -> replace with
+CORS(app, supports_credentials=True)
+
+
+
 
 # App config
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/app.db'
@@ -38,12 +28,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/layla/Development/code
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
+
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 # Initialize db, migrate, and api
 db.init_app(app)
 migrate.init_app(app, db)
-api.init_app(app)
+# api.init_app(app)
 
 # Start your views and routes
 @app.route('/')
@@ -103,6 +94,7 @@ class Login(Resource):
         
 class Sellers(Resource):
     def get(self):
+        print("Sellers endpoint was hit!")
 
         sellers = User.query.all()
         if not sellers:
@@ -132,7 +124,12 @@ class Sellers(Resource):
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Sellers, '/sellers')
+print("Route /sellers has been added!")
+
+api.init_app(app)
+
 
 if __name__ == '__main__':
+    print("Flask server is starting...")
     app.run(port=5555, debug=True)
 
