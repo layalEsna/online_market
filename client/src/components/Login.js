@@ -35,6 +35,7 @@ function Login() {
         onSubmit: (values => {
             fetch('http://127.0.0.1:5555/login', {
                 method: 'POST',
+                credentials: 'include', 
                 headers: {
                     'Content-Type': 'application/json'
                 },
