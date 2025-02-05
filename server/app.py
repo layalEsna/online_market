@@ -36,7 +36,7 @@ db.init_app(app)
 migrate.init_app(app, db)
 # api.init_app(app)
 
-# Start your views and routes
+# Start your views and routes 
 @app.route('/')
 def index():
     return '<h1>Project Server here</h1>'
@@ -126,6 +126,10 @@ class ProductById(Resource):
         if not product:
             return make_response(jsonify({'error': f'Product with ID: {id} not found.'}), 404)
         return make_response(jsonify(product.to_dict()), 200)
+    
+# class Purchase(Resource):
+#     def post(self, id):
+
        
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')

@@ -11,7 +11,7 @@ from decimal import Decimal
 # db.init_app(app)
 import re
 
-# Models go here!
+# Models go here! 
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -108,7 +108,7 @@ class UserProduct(db.Model, SerializerMixin):
     @validates('quantity')
     def validate_quantity(self, key, quantity):
         if not isinstance(quantity, int) or quantity <= 0:
-            raise ValueError('Quantity must be a positive integer.')
+            raise ValueError('Quantity is required and must be a positive integer.')
         return quantity
     
     @validates('delivery_address')
