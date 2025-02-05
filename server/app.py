@@ -120,10 +120,18 @@ class Sellers(Resource):
 
         return make_response(jsonify({'count': len(sellers_with_products), 'sellers': sellers_with_products}), 200)
 
+class ProductById(Resource):
+    def get(self, id):
+        product = Product.query.filter(Product.id==id).first()
+        if not product:
+            return make_response(jsonify({'error': f'Product with ID: {id} not found.'}), 404)
+        return make_response(jsonify(product.to_dict()), 200)
        
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Sellers, '/sellers')
+api.add_resource(ProductById, '/products/<int:id>')
+
 print("Route /sellers has been added!")
 
 api.init_app(app)
