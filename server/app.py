@@ -158,12 +158,40 @@ class Purchase(Resource):
 
         return make_response(jsonify(new_purchase.to_dict()), 201)
 
-       
+class Cart(Resource):
+    def get(self):
+
+        purchases = UserProduct.query.all()
+        if not purchases:
+            return make_response(jsonify({'count': 0, 'cart': []}), 200)
+        
+        cart_items = [
+            {
+                'id': purchase.id,
+                'user_id': purchase.user_id,
+
+                'product': {
+                    'id': purchase.product.id,
+                    'name': purchase.product.name,
+                    'description': purchase.product.description,
+                    'image': purchase.product.image,
+                    'price': purchase.product.price,
+                },
+                'quantity': purchase.quantity,
+                'delivery_address': purchase.delivery_address,
+                'payment_method': purchase.payment_method,
+            }
+            for purchase in purchases
+        ]
+
+        return make_response(jsonify({'count': len(cart_items), 'cart': cart_items}), 200)
+               
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Sellers, '/sellers')
 api.add_resource(ProductById, '/products/<int:id>')
 api.add_resource(Purchase, '/products/<int:product_id>/purchase')
+api.add_resource(Cart, '/products/purchases')
 
 print("Route /sellers has been added!")
 
