@@ -127,14 +127,43 @@ class ProductById(Resource):
             return make_response(jsonify({'error': f'Product with ID: {id} not found.'}), 404)
         return make_response(jsonify(product.to_dict()), 200)
     
-# class Purchase(Resource):
-#     def post(self, id):
+class Purchase(Resource):
+    def post(self, product_id):
+
+        data = request.get_json()
+        quantity = data.get('quantity')
+        delivery_address = data.get('delivery_address')
+        payment_method = data.get('payment_method')
+        user_id = session.get('user_id')
+
+        if not user_id:
+            return make_response(jsonify({'error': 'User must be logged in to make a purchase.'}), 401)
+
+        if not all([quantity, delivery_address, payment_method]):
+            return make_response(jsonify({'error': 'All the fields are required.'}), 400)
+        if len(delivery_address) > 255:
+            return make_response(jsonify({'error': 'Delivery address must be shorter than 255 characters.'}), 401)
+        new_purchase = UserProduct(
+            user_id = user_id,
+            quantity = quantity,
+            delivery_address = delivery_address,
+            payment_method = payment_method,
+            product_id=product_id,
+        )
+
+        db.session.add(new_purchase)
+        db.session.commit()
+
+        session['purchase_id'] = new_purchase.id
+
+        return make_response(jsonify(new_purchase.to_dict()), 201)
 
        
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Sellers, '/sellers')
 api.add_resource(ProductById, '/products/<int:id>')
+api.add_resource(Purchase, '/products/<int:product_id>/purchase')
 
 print("Route /sellers has been added!")
 
