@@ -4,6 +4,7 @@ import { useFormik } from "formik"
 import { useNavigate } from "react-router-dom"
 import { useParams } from "react-router-dom"
 import * as Yup from 'yup'
+import Cart from "./Cart"
 
 function ProductDetails() {
 
@@ -60,13 +61,19 @@ function ProductDetails() {
                     }
                     return res.json()
                 })
-                .then(data => console.log(data))
+                .then(data => {
+                    console.log(data)
+                    navigate('/cart')
+                }
+                
+            )
+
                 .catch(e => console.log(`Internal error: ${e}`))
         })
 
 
     })
-    
+
     return (
         <div>
             <form onSubmit={formik.handleSubmit}>

@@ -5,7 +5,7 @@ import Signup from "./Signup";
 import Login from "./Login";
 import Seller from "./Seller";
 import ProductDetails from "./ProductDetails";
-
+import Cart from "./Cart";
 function App() {
   return (
     <Router>
@@ -17,6 +17,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/sellers" element={<Seller />} />
             <Route path="/products/:product_id" element={<ProductDetails />} />
+            {/* <Route path="/cart" element={<Cart />} /> */}
           </Routes>
         </main>
       </div>
