@@ -27,8 +27,9 @@ function Seller() {
 
     return (
         <div>
-            <h1>Market Viwe</h1>
             console.log("Seller component rendered")
+            <h1>Market View</h1>
+            
             {sellers.map(seller => (
                 <div key={seller.id}>
                     <h3>{seller.username}</h3>  
@@ -41,12 +42,15 @@ function Seller() {
                                     alt={product.name}
                     />
                     <p>{product.description}</p>
-                    <p>price: ${product.price}</p> 
+                                <p>price: ${product.price}</p> 
+                                <button onClick={()=> navigate(`/products/${product.id}`)}>buy</button>
+                                {/* <button onClick={()=> navigate(`/sellers/${seller.id}`)}>buy</button> */}
+
                             </div>
                         ))
                     ):( <p>No product available</p>)}
                     
-                    <button onClick={()=> navigate(`/sellers/${seller.id}`)}>buy</button>
+                    {/* <button onClick={()=> navigate(`/products/${product.id}`)}>buy</button> */}
                 </div>
             ))}
             

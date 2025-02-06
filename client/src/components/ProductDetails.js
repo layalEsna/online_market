@@ -18,6 +18,7 @@ function ProductDetails() {
     const navigate = useNavigate()
 
     useEffect(() => {
+        console.log("Fetching product with ID:", product_id)
         fetch(`http://127.0.0.1:5555/products/${product_id}`)
             .then(res => {
                 if (!res.ok) {
@@ -25,7 +26,13 @@ function ProductDetails() {
                 }
                 return res.json()
             })
-            .then(data => setProducts(data))
+
+            // .then(data => setProducts(data))
+            .then(data => {
+                console.log("Fetched product data:", data);
+                setProducts(data);
+            })
+
             .catch(e => console.error(`Internal error: ${e}`))
     }, [product_id])
 
@@ -65,8 +72,8 @@ function ProductDetails() {
                     console.log(data)
                     navigate('/cart')
                 }
-                
-            )
+
+                )
 
                 .catch(e => console.log(`Internal error: ${e}`))
         })
@@ -74,8 +81,14 @@ function ProductDetails() {
 
     })
 
+    // function handelNavigate() {
+    //     useNavigate()
+    // }
+
     return (
         <div>
+            {/* <Cart/> */}
+            <h1>Product Details</h1>
             <form onSubmit={formik.handleSubmit}>
                 <div>
                     <label htmlFor="quantity">Qty</label>
