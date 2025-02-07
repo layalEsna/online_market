@@ -28,6 +28,7 @@ function ProductDetails() {
     useEffect(() => {
         console.log("Fetching product with ID:", product_id)
         fetch(`http://127.0.0.1:5555/products/${product_id}`)
+        // fetch(`http://localhost:5555/products/${product_id}`)
             .then(res => {
                 if (!res.ok) {
                     throw new Error(`Failed to fetch product with ID: ${product_id}`)
@@ -73,9 +74,12 @@ function ProductDetails() {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify({ ...values, username: loggedInUser })
+
+                body: JSON.stringify({})
+                // body: JSON.stringify({ ...values, username: loggedInUser })
                 // body: JSON.stringify({
                 //     quantity: 1,
                 //     delivery_address: "123 Main St",

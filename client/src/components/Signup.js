@@ -35,6 +35,7 @@ function Signup() {
         }),
         onSubmit: (values => {
             fetch('http://127.0.0.1:5555/signup', {
+            // fetch('http://localhost:5555/signup', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

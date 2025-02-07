@@ -1,12 +1,8 @@
-# load_dotenv
-# CORS = CORS
-# app.py
+
 from flask import Flask, request, make_response, jsonify, session
 from flask_restful import Resource
 from dotenv import load_dotenv
-
-
-# ############  add from flask_session import Session
+# Session(app) CORS(app, support
 from flask_session import Session
 
 
@@ -15,15 +11,11 @@ load_dotenv()
 from server.config import db, migrate, api, bcrypt
 from server.models import *  
 
-######
+
 from flask_cors import CORS
 
 app = Flask(__name__)
 
-######
-######CORS(app) -> replace with
-######CORS(app, resources={r"/api/*": {"origins": "*"}}) -> replace with
-CORS(app, supports_credentials=True)
 
 
 
@@ -34,10 +26,8 @@ app.config['SESSION_USE_SIGNER'] = True  # Secure cookies
 app.config['SESSION_FILE_DIR'] = './flask_session'  # Store session files locally
 Session(app)  # <-- Initialize Flask-Session
 
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 
-
-#########add app.config['SESSION_COOKIE_SAMESITE'] = 'None'
-##########app.config['SESSION_COOKIE_SECURE'] = False
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 app.config['SESSION_COOKIE_SECURE'] = False
 
@@ -45,8 +35,6 @@ app.config['SESSION_COOKIE_SECURE'] = False
 
 
 
-# App config
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/app.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/layla/Development/code/se-prep/phase-4/online_market/server/instance/app.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -54,15 +42,32 @@ app.json.compact = False
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
+if not app.config['SECRET_KEY']:
+    raise ValueError("Missing SECRET_KEY! Check your .env file.")  # Debugging check
+
+
+# Session(app)
+
+
+# CORS(app, supports_credentials=True, origins="http://localhost:3000")
+CORS(app, supports_credentials=True)
+
 # Initialize db, migrate, and api
 db.init_app(app)
 migrate.init_app(app, db)
 # api.init_app(app)
+print("Loaded SECRET_KEY:", app.config['SECRET_KEY'])
 
 # Start your views and routes 
 @app.route('/')
 def index():
     return '<h1>Project Server here</h1>'
+
+@app.route('/debug-session')
+def debug_session():
+    print("SESSION CONTENTS:", dict(session))  # Log session data in Flask
+    return {'session': dict(session)}, 200
+
 
 @app.before_request
 def print_session():
@@ -92,9 +97,12 @@ class Signup(Resource):
 
             db.session.add(new_user)
             db.session.commit()
-            session['user_id'] = new_user.id
 
-            session['user_id']
+            session.clear()
+            session['user_id'] = new_user.id
+            # session.modified = True
+
+            
 
             return make_response(jsonify(new_user.to_dict()), 201)
 
@@ -114,8 +122,9 @@ class Login(Resource):
             user = User.query.filter(User.username==username).first()
             if not user or not user.check_password(password):
                 return make_response(jsonify({'error': 'Wrong username or password.'}), 404)
-            
+            session.clear()
             session['user_id'] = user.id
+            # session.modified = True
 
             print("SESSION CONTENTS AFTER LOGIN:", session) 
 
@@ -138,13 +147,13 @@ class Sellers(Resource):
                 'username': seller.username,
                 'products': [
                     {
-                        'id': product.product.id,
-                        'name': product.product.name,
-                        'description': product.product.description,
-                        'image': product.product.image,
-                        'price': product.product.price
+                        'id': user_product.product.id,
+                        'name': user_product.product.name,
+                        'description': user_product.product.description,
+                        'image': user_product.product.image,
+                        'price': user_product.product.price
                     }
-                    for product in seller.user_products
+                    for user_product in seller.user_products
                 ]            
             }
              for seller in sellers
@@ -154,7 +163,8 @@ class Sellers(Resource):
 
 class ProductById(Resource):
     def get(self, id):
-        product = Product.query.filter(Product.id==id).first()
+        # product = Product.query.filter(Product.id==id).first()
+        product = Product.query.get(id)
         if not product:
             return make_response(jsonify({'error': f'Product with ID: {id} not found.'}), 404)
         return make_response(jsonify(product.to_dict()), 200)
@@ -162,24 +172,19 @@ class ProductById(Resource):
 class Purchase(Resource):
     def post(self, product_id):
 
-        print("Received session cookie:", request.cookies.get("session"))  # Debugging
-        print("Session contents during purchase:", dict(session))  # Debugging
-
-
         data = request.get_json()
         quantity = data.get('quantity')
         delivery_address = data.get('delivery_address')
         payment_method = data.get('payment_method')
+        
         user_id = session.get('user_id')
-        print("SESSION CONTENTS DURING PURCHASE:", session)
-
         if not user_id:
             return make_response(jsonify({'error': 'User must be logged in to make a purchase.'}), 401)
 
         if not all([quantity, delivery_address, payment_method]):
             return make_response(jsonify({'error': 'All the fields are required.'}), 400)
         if len(delivery_address) > 255:
-            return make_response(jsonify({'error': 'Delivery address must be shorter than 255 characters.'}), 401)
+            return make_response(jsonify({'error': 'Delivery address must be shorter than 255 characters.'}), 400)
         new_purchase = UserProduct(
             user_id = user_id,
             quantity = quantity,
@@ -195,10 +200,15 @@ class Purchase(Resource):
 
         return make_response(jsonify(new_purchase.to_dict()), 201)
 
+
 class Cart(Resource):
     def get(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response(jsonify({'error': 'User must be logged in to view the cart.'}), 401)
 
-        purchases = UserProduct.query.all()
+
+        purchases = UserProduct.query.filter(UserProduct.user_id == user_id).all()
         if not purchases:
             return make_response(jsonify({'count': 0, 'cart': []}), 200)
         
@@ -214,14 +224,17 @@ class Cart(Resource):
                     'image': purchase.product.image,
                     'price': purchase.product.price,
                 },
+               
                 'quantity': purchase.quantity,
                 'delivery_address': purchase.delivery_address,
                 'payment_method': purchase.payment_method,
             }
-            for purchase in purchases
+            for purchase in purchases if purchase.product is not None
         ]
 
         return make_response(jsonify({'count': len(cart_items), 'cart': cart_items}), 200)
+               
+
                
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
