@@ -62,6 +62,10 @@ db = SQLAlchemy(metadata=MetaData(naming_convention={
 migrate = Migrate()
 bcrypt = Bcrypt()
 api = Api()
+
+
+# app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+# app.config['SESSION_COOKIE_SECURE'] = False
 # CORS = CORS
 # CORS(app)
 # Load your secret key and database URI

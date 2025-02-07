@@ -14,8 +14,16 @@ function ProductDetails() {
         image: '',
         price: ''
     })
+    const [errorMessage, setErrorMessage] = useState('')
     const { product_id } = useParams()
     const navigate = useNavigate()
+
+
+    // const loggedInUser = sessionStorage.getItem('username') || localStorage.getItem('username')
+    // if (!loggedInUser) {
+    //     console.log('User is not logged in')
+    //     return
+    // }
 
     useEffect(() => {
         console.log("Fetching product with ID:", product_id)
@@ -54,13 +62,29 @@ function ProductDetails() {
                 .max(50, 'Payment method must be less than 50 characters.')
         }),
         onSubmit: (values => {
+            const loggedInUser = sessionStorage.getItem('username') || localStorage.getItem('username')
+            if (!loggedInUser) {
+                console.log('User is not logged in')
+                setErrorMessage('You must be logged in to make a purchase.')
+                return
+            }
             fetch(`http://127.0.0.1:5555/products/${product_id}/purchase`, {
+            // fetch("http://127.0.0.1:5555/products/4/purchase", {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(values)
+                body: JSON.stringify({ ...values, username: loggedInUser })
+                // body: JSON.stringify({
+                //     quantity: 1,
+                //     delivery_address: "123 Main St",
+                //     payment_method: "visa"
+                // }),
+
+
+
+
             })
                 .then(res => {
                     if (!res.ok) {
@@ -81,11 +105,11 @@ function ProductDetails() {
 
     })
 
-    
+
 
     return (
         <div>
-         
+
             <h1>Product Details</h1>
             <form onSubmit={formik.handleSubmit}>
                 <div>

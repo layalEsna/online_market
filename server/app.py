@@ -4,6 +4,12 @@
 from flask import Flask, request, make_response, jsonify, session
 from flask_restful import Resource
 from dotenv import load_dotenv
+
+
+# ############  add from flask_session import Session
+from flask_session import Session
+
+
 import os
 load_dotenv()
 from server.config import db, migrate, api, bcrypt
@@ -18,6 +24,23 @@ app = Flask(__name__)
 ######CORS(app) -> replace with
 ######CORS(app, resources={r"/api/*": {"origins": "*"}}) -> replace with
 CORS(app, supports_credentials=True)
+
+
+
+
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True  # Secure cookies
+app.config['SESSION_FILE_DIR'] = './flask_session'  # Store session files locally
+Session(app)  # <-- Initialize Flask-Session
+
+
+
+#########add app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+##########app.config['SESSION_COOKIE_SECURE'] = False
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = False
+
 
 
 
@@ -40,6 +63,11 @@ migrate.init_app(app, db)
 @app.route('/')
 def index():
     return '<h1>Project Server here</h1>'
+
+@app.before_request
+def print_session():
+    print("SESSION CONTENTS:", session)
+
 
 class Signup(Resource):
     def post(self):
@@ -66,6 +94,8 @@ class Signup(Resource):
             db.session.commit()
             session['user_id'] = new_user.id
 
+            session['user_id']
+
             return make_response(jsonify(new_user.to_dict()), 201)
 
         except Exception as e:
@@ -86,6 +116,8 @@ class Login(Resource):
                 return make_response(jsonify({'error': 'Wrong username or password.'}), 404)
             
             session['user_id'] = user.id
+
+            print("SESSION CONTENTS AFTER LOGIN:", session) 
 
             return make_response(jsonify({'message': 'Successful login!'}), 200)
 
@@ -130,11 +162,16 @@ class ProductById(Resource):
 class Purchase(Resource):
     def post(self, product_id):
 
+        print("Received session cookie:", request.cookies.get("session"))  # Debugging
+        print("Session contents during purchase:", dict(session))  # Debugging
+
+
         data = request.get_json()
         quantity = data.get('quantity')
         delivery_address = data.get('delivery_address')
         payment_method = data.get('payment_method')
         user_id = session.get('user_id')
+        print("SESSION CONTENTS DURING PURCHASE:", session)
 
         if not user_id:
             return make_response(jsonify({'error': 'User must be logged in to make a purchase.'}), 401)
