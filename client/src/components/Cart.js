@@ -34,7 +34,9 @@ function Cart() {
                     <div key={purchase.id}>
 
                         <p>{purchase.product.name}</p>
-                        <img src={purchase.product.image} alt={purchase.product.name}/>
+                        <img src={purchase.product.image} alt={purchase.product.name}
+                            style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+                        />
                         <p>{purchase.product.description}</p>
                         <p>{purchase.product.price}</p>
 

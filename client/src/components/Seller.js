@@ -7,8 +7,14 @@ function Seller() {
     const [sellers, setSellers] = useState([])
     const navigate = useNavigate()
     const [error, setError] = useState(null)
+    const [username, setUsername] = useState(null)
     
     useEffect(() => {
+        // const loggedInUser = sessionStorage.getItem('username') || localStorage.getItem('username');
+        
+        // if (loggedInUser) {
+        //     setUsername(loggedInUser)
+        // }
         fetch('http://127.0.0.1:5555/sellers')
             .then(res => {
                 if (!res.ok) {
@@ -27,8 +33,9 @@ function Seller() {
 
     return (
         <div>
-            console.log("Seller component rendered")
+            
             <h1>Market View</h1>
+            {username && <p>Welcome, {username}!</p>}
             
             {sellers.map(seller => (
                 <div key={seller.id}>
@@ -40,6 +47,7 @@ function Seller() {
                     <img
                                     src={product.image}
                                     alt={product.name}
+                                    style={{ width: '150px', height: '150px', objectFit: 'cover' }}
                     />
                     <p>{product.description}</p>
                                 <p>price: ${product.price}</p> 

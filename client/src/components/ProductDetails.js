@@ -4,7 +4,7 @@ import { useFormik } from "formik"
 import { useNavigate } from "react-router-dom"
 import { useParams } from "react-router-dom"
 import * as Yup from 'yup'
-import Cart from "./Cart"
+// import Cart from "./Cart"
 
 function ProductDetails() {
 
@@ -14,7 +14,7 @@ function ProductDetails() {
         image: '',
         price: ''
     })
-    const { username, product_id } = useParams()
+    const { product_id } = useParams()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -81,13 +81,11 @@ function ProductDetails() {
 
     })
 
-    // function handelNavigate() {
-    //     useNavigate()
-    // }
+    
 
     return (
         <div>
-            {/* <Cart/> */}
+         
             <h1>Product Details</h1>
             <form onSubmit={formik.handleSubmit}>
                 <div>

@@ -10,7 +10,7 @@ function App() {
   return (
     <Router>
       <div>
-        <h1>Project Client</h1>
+        
         <main>
           <Routes>
             <Route path="/signup" element={<Signup />} />

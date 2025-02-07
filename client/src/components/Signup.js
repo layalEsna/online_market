@@ -52,6 +52,11 @@ function Signup() {
             })
                 .then(data => {
                     setLoading(false)
+                    if (!data || !data.id) {
+                        throw new Error('Signup failed.')
+                    }
+                    sessionStorage.setItem('username', values.username)
+                    localStorage.setItem('username', values.username)
                 navigate('/sellers')
                 })
                 .catch(e => {

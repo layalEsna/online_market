@@ -1,7 +1,6 @@
 
 
-
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { useFormik } from 'formik'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
@@ -19,7 +18,7 @@ function Login() {
         initialValues: {
             username: '',
             password: ''
-           
+
         },
         validationSchema: Yup.object({
             username: Yup.string()
@@ -30,37 +29,34 @@ function Login() {
                 .required('Password is required.')
                 .min(8, 'Password must be at least 8 characters.')
                 .matches(passwordPattern, 'Password must be at least 8 characters long and include at least 1 lowercase letter, 1 uppercase letter, and 1 special character (!@#$%^&*).'),
-            
+
         }),
         onSubmit: (values => {
             fetch('http://127.0.0.1:5555/login', {
                 method: 'POST',
-                credentials: 'include', 
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(values)
 
             })
-                
-            .then(res => {
-                return res.json().then(data => {
-                    if (!res.ok) {
-                        throw new Error(data.error || "Login failed.");
+                .then(res => res.json())
+
+
+                .then((data) => {
+                    if (!data.message || data.message !== 'Successful login!') {
+                        throw new Error('data.error || "Login failed."')
                     }
-                    return data;
-                });
-            })
-            
-            
-                .then(() => {
-                navigate('/sellers')
-            })
+                    sessionStorage.setItem('username', values.username)
+                    localStorage.setItem('username', values.username)
+                    navigate('/sellers')
+                })
                 .catch(e => {
                     setErrorMessage(e.message)
-                console.error(`Internal error: ${e.message}`)
-            })
-        
+                    // console.error(`Internal error: ${e.message}`)
+                })
+
         })
     })
 
@@ -80,7 +76,7 @@ function Login() {
                         onBlur={formik.handleBlur}
                     />
                     {formik.errors.username && formik.touched.username && (
-                        <div>{ formik.errors.username }</div>
+                        <div>{formik.errors.username}</div>
                     )}
                 </div>
                 <div>
@@ -94,16 +90,16 @@ function Login() {
                         onBlur={formik.handleBlur}
                     />
                     {formik.errors.password && formik.touched.password && (
-                        <div>{ formik.errors.password }</div>
+                        <div>{formik.errors.password}</div>
                     )}
                 </div>
-               
+
                 <div>
                     <button type='submit'>login</button>
                 </div>
 
             </form>
-            {errorMessage && <div>{ errorMessage }</div>}
+            {errorMessage && <div>{errorMessage}</div>}
 
         </div>
     )
