@@ -10,11 +10,11 @@ function Seller() {
     const [username, setUsername] = useState(null)
     
     useEffect(() => {
-        // const loggedInUser = sessionStorage.getItem('username') || localStorage.getItem('username');
+        const loggedInUser = sessionStorage.getItem('username') || localStorage.getItem('username');
         
-        // if (loggedInUser) {
-        //     setUsername(loggedInUser)
-        // }
+        if (loggedInUser) {
+            setUsername(loggedInUser)
+        }
         fetch('http://127.0.0.1:5555/sellers')
             .then(res => {
                 if (!res.ok) {
