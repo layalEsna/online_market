@@ -65,4 +65,5 @@ instance
 .vscode
 package-lock.json
 
-.env
+.envflask_session/
+flask_session/
