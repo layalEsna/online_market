@@ -241,6 +241,11 @@ class Cart(Resource):
 
         return make_response(jsonify({'count': len(cart_items), 'cart': cart_items}), 200)
                
+class Logout(Resource):
+    def delete(self): 
+        session.pop('user_id', None)
+        return make_response(jsonify({'message': 'Successfully logged out.'}), 200)
+        
 
                
 api.add_resource(Signup, '/signup')
@@ -249,6 +254,8 @@ api.add_resource(Sellers, '/sellers')
 api.add_resource(ProductById, '/products/<int:id>')
 api.add_resource(Purchase, '/products/<int:product_id>/purchase')
 api.add_resource(Cart, '/products/purchases')
+api.add_resource(Logout, '/logout')
+
 
 print("Route /sellers has been added!")
 
