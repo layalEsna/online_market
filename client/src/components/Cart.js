@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom"
 function Cart() {
 
     const [info, setInfo] = useState({ cart: [] })
+    // { cart: [] }
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetch('http://127.0.0.1:5555/products/purchases')
+        fetch('http://localhost:5555/products/purchases')
             .then(res => {
                 if (!res.ok) {
                     throw new Error('Failed to fetch data.')

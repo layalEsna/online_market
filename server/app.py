@@ -2,12 +2,17 @@
 from flask import Flask, request, make_response, jsonify, session
 from flask_restful import Resource
 from dotenv import load_dotenv
-# Session(app) CORS(app, support
+
 from flask_session import Session
 
 
+
+
+
 import os
-load_dotenv()
+# load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+
 from server.config import db, migrate, api, bcrypt
 from server.models import *  
 
@@ -19,20 +24,20 @@ app = Flask(__name__)
 
 
 
-
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_PERMANENT'] = True
 app.config['SESSION_USE_SIGNER'] = True  # Secure cookies
 app.config['SESSION_FILE_DIR'] = './flask_session'  # Store session files locally
 Session(app)  # <-- Initialize Flask-Session
 
 app.config['SESSION_COOKIE_HTTPONLY'] = True
+# app.config['SESSION_PERMANENT'] = True
 
-app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+# app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+# app.config['SESSION_COOKIE_SECURE'] = False
+
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = False
-
-
-
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/layla/Development/code/se-prep/phase-4/online_market/server/instance/app.db'
@@ -49,13 +54,14 @@ if not app.config['SECRET_KEY']:
 # Session(app)
 
 
-# CORS(app, supports_credentials=True, origins="http://localhost:3000")
-CORS(app, supports_credentials=True)
+
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+# CORS(app, supports_credentials=True)
 
 # Initialize db, migrate, and api
 db.init_app(app)
 migrate.init_app(app, db)
-# api.init_app(app)
+
 print("Loaded SECRET_KEY:", app.config['SECRET_KEY'])
 
 # Start your views and routes 
@@ -98,7 +104,7 @@ class Signup(Resource):
             db.session.add(new_user)
             db.session.commit()
 
-            session.clear()
+            
             session['user_id'] = new_user.id
             # session.modified = True
 
@@ -111,6 +117,7 @@ class Signup(Resource):
         
 class Login(Resource):
     def post(self):
+        print("Received request data:", request.get_json())
 
         try:
             data = request.get_json()
@@ -122,7 +129,7 @@ class Login(Resource):
             user = User.query.filter(User.username==username).first()
             if not user or not user.check_password(password):
                 return make_response(jsonify({'error': 'Wrong username or password.'}), 404)
-            session.clear()
+            
             session['user_id'] = user.id
             # session.modified = True
 

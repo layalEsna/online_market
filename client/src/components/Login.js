@@ -32,13 +32,17 @@ function Login() {
 
         }),
         onSubmit: (values => {
-            fetch('http://127.0.0.1:5555/login', {
-            // fetch('http://localhost:5555/login', {
-                method: 'POST',
+            console.log("Submitting login request with values:", values);
+
+            // fetch('http://127.0.0.1:5555/login', {
+            fetch('http://localhost:5555/login', {
                 credentials: 'include',
+                method: 'POST',
+                // credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                // credentials: 'include', 
                 body: JSON.stringify(values)
 
             })

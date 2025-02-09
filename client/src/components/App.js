@@ -6,11 +6,13 @@ import Login from "./Login";
 import Seller from "./Seller";
 import ProductDetails from "./ProductDetails";
 import Cart from "./Cart";
+import NavBar from "./NavBar"
+
 function App() {
   return (
     <Router>
       <div>
-        
+        <NavBar/>
         <main>
           <Routes>
             <Route path="/signup" element={<Signup />} />

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
+
 function Seller() {
 
     const [sellers, setSellers] = useState([])
@@ -15,7 +16,7 @@ function Seller() {
         if (loggedInUser) {
             setUsername(loggedInUser)
         }
-        fetch('http://127.0.0.1:5555/sellers')
+        fetch('http://localhost:5555/sellers')
             .then(res => {
                 if (!res.ok) {
                     throw new Error(`Failed to fetch data: ${res.status} ${res.statusText}`)
@@ -33,6 +34,7 @@ function Seller() {
 
     return (
         <div>
+            
             
             <h1>Market View</h1>
             {username && <p>Welcome, {username}!</p>}

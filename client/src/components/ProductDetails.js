@@ -8,7 +8,7 @@ import * as Yup from 'yup'
 
 function ProductDetails() {
 
-    const [products, setProducts] = useState({
+    const [product, setProducts] = useState({
         name: '',
         description: '',
         image: '',
@@ -69,23 +69,18 @@ function ProductDetails() {
                 setErrorMessage('You must be logged in to make a purchase.')
                 return
             }
-            fetch(`http://127.0.0.1:5555/products/${product_id}/purchase`, {
-            // fetch("http://127.0.0.1:5555/products/4/purchase", {
-                method: 'POST',
+            fetch(`http://localhost:5555/products/${product_id}/purchase`, {
                 credentials: 'include',
+
+                method: 'POST',
+                // credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-
-                body: JSON.stringify({})
-                // body: JSON.stringify({ ...values, username: loggedInUser })
-                // body: JSON.stringify({
-                //     quantity: 1,
-                //     delivery_address: "123 Main St",
-                //     payment_method: "visa"
-                // }),
-
+                // credentials: 'include',               
+                body: JSON.stringify({ ...values, user_id: loggedInUser })
+                
 
 
 
@@ -115,6 +110,16 @@ function ProductDetails() {
         <div>
 
             <h1>Product Details</h1>
+            <div>
+                <h2>{product.name}</h2>
+                <p>{product.description}</p>
+                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+                />
+                <p>Price: ${product.price}</p>
+            </div>
             <form onSubmit={formik.handleSubmit}>
                 <div>
                     <label htmlFor="quantity">Qty</label>
