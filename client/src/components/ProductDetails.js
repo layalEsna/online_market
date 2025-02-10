@@ -179,7 +179,7 @@ function ProductDetails() {
                         <div>{formik.errors.payment_method}</div>
                     )}
                 </div>
-                <button type="submit">add to the list</button>
+                <button className='btn' type="submit">add to the list</button>
 
             </form>
 

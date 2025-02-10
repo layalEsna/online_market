@@ -8,13 +8,17 @@ function NavBar() {
     function handleLogout() {
         fetch('http://127.0.0.1:5555/logout', {
             method: 'DELETE',
+            credentials: 'include'
         })
             .then(res => {
-                if (res.ok) {
+                if (!res.ok) {
+                throw new Error('Logout failed.')
+                }
+                return res.json()
+            })
+            .then(data => {
+                console.log(data.message)
                 navigate('/login')
-                } else {
-                    console.error('Logout failed.')
-            }
             })
             .catch(e => {
             console.error(`Error during logout: ${e}`)
@@ -27,9 +31,9 @@ function NavBar() {
             <nav>
                 
             
-            <Link to='/sellers'>Market View</Link>
+            <Link className='nav' to='/sellers'>Market View</Link>
             
-            <Link to='/cart'>Cart</Link>
+            <Link className='nav' to='/cart'>Cart</Link>
             <button className='btn' onClick={handleLogout}>logout</button>
        
 

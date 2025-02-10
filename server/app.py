@@ -17,7 +17,7 @@ from server.config import db, migrate, api, bcrypt
 from server.models import *  
 
 
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 
@@ -28,7 +28,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = True
 app.config['SESSION_USE_SIGNER'] = True  # Secure cookies
 app.config['SESSION_FILE_DIR'] = './flask_session'  # Store session files locally
-Session(app)  # <-- Initialize Flask-Session
+Session(app)  
 
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 # app.config['SESSION_PERMANENT'] = True
@@ -52,7 +52,6 @@ if not app.config['SECRET_KEY']:
 
 
 # Session(app)
-
 
 
 CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
@@ -81,6 +80,7 @@ def print_session():
 
 
 class Signup(Resource):
+    @cross_origin(supports_credentials=True)
     def post(self):
 
         try:
@@ -106,6 +106,7 @@ class Signup(Resource):
 
             
             session['user_id'] = new_user.id
+            session.permanent = True 
             # session.modified = True
 
             
@@ -116,6 +117,7 @@ class Signup(Resource):
             return make_response(jsonify({'error': f'Internal error: {e}'}), 500)
         
 class Login(Resource):
+    @cross_origin(supports_credentials=True)
     def post(self):
         print("Received request data:", request.get_json())
 
@@ -131,6 +133,7 @@ class Login(Resource):
                 return make_response(jsonify({'error': 'Wrong username or password.'}), 404)
             
             session['user_id'] = user.id
+            session.permanent = True
             # session.modified = True
 
             print("SESSION CONTENTS AFTER LOGIN:", session) 
@@ -141,6 +144,7 @@ class Login(Resource):
             return make_response(jsonify({'error': f'Internal error: {e}'}), 500)
         
 class Sellers(Resource):
+    @cross_origin(supports_credentials=True)
     def get(self):
         print("Sellers endpoint was hit!")
 
@@ -169,6 +173,7 @@ class Sellers(Resource):
         return make_response(jsonify({'count': len(sellers_with_products), 'sellers': sellers_with_products}), 200)
 
 class ProductById(Resource):
+    @cross_origin(supports_credentials=True)
     def get(self, id):
         # product = Product.query.filter(Product.id==id).first()
         product = Product.query.get(id)
@@ -177,6 +182,7 @@ class ProductById(Resource):
         return make_response(jsonify(product.to_dict()), 200)
     
 class Purchase(Resource):
+    @cross_origin(supports_credentials=True)
     def post(self, product_id):
 
         data = request.get_json()
@@ -209,6 +215,7 @@ class Purchase(Resource):
 
 
 class Cart(Resource):
+    @cross_origin(supports_credentials=True)
     def get(self):
         user_id = session.get('user_id')
         if not user_id:
@@ -242,12 +249,18 @@ class Cart(Resource):
         return make_response(jsonify({'count': len(cart_items), 'cart': cart_items}), 200)
                
 class Logout(Resource):
+    @cross_origin(supports_credentials=True)
     def delete(self): 
         session.pop('user_id', None)
+        print("SESSION AFTER LOGOUT:", session)
         return make_response(jsonify({'message': 'Successfully logged out.'}), 200)
         
 
-               
+@cross_origin()
+def options(self):
+    return make_response('', 200)  
+
+
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Sellers, '/sellers')

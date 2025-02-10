@@ -49,7 +49,7 @@ function Cart() {
                     </div>
                 ))
             ): (<p>Your cart is empty.</p>)}
-            <button type="button" onClick={handleCheckout}>Checkout</button>
+            <button className='btn' type="button" onClick={handleCheckout}>Checkout</button>
         </div>
     )
 

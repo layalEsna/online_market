@@ -7,7 +7,7 @@ import Seller from "./Seller";
 import ProductDetails from "./ProductDetails";
 import Cart from "./Cart";
 import NavBar from "./NavBar"
-import Logout from "./Logout";
+// import Logout from "./Logout";
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
             <Route path="/sellers" element={<Seller />} />
             <Route path="/products/:product_id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/logout" element={<Logout />} />
+            {/* <Route path="/logout" element={<Logout />} /> */}
           </Routes>
         </main>
       </div>

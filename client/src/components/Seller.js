@@ -53,7 +53,7 @@ function Seller() {
                     />
                     <p>{product.description}</p>
                                 <p>price: ${product.price}</p> 
-                                <button onClick={()=> navigate(`/products/${product.id}`)}>buy</button>
+                                <button className='btn' onClick={()=> navigate(`/products/${product.id}`)}>buy</button>
                                 {/* <button onClick={()=> navigate(`/sellers/${seller.id}`)}>buy</button> */}
 
                             </div>
