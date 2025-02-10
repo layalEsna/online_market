@@ -5,7 +5,7 @@ import { useFormik } from 'formik'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
-
+// Login failed.
 function Login() {
 
     const [errorMessage, setErrorMessage] = useState('')
@@ -51,7 +51,8 @@ function Login() {
 
                 .then((data) => {
                     if (!data.message || data.message !== 'Successful login!') {
-                        throw new Error('data.error || "Login failed."')
+                        // throw new Error(data.error || "Login failed.")
+                        throw new Error('User not found')
                     }
                     sessionStorage.setItem('username', values.username)
                     localStorage.setItem('username', values.username)

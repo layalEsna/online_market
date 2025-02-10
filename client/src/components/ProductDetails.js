@@ -69,6 +69,11 @@ function ProductDetails() {
                 setErrorMessage('You must be logged in to make a purchase.')
                 return
             }
+            const updatedValues = {
+                ...values,
+                quantity: Number(values.quantity),
+                user_id: loggedInUser
+            }
             fetch(`http://localhost:5555/products/${product_id}/purchase`, {
                 credentials: 'include',
 
@@ -79,7 +84,7 @@ function ProductDetails() {
                     'Accept': 'application/json'
                 },
                 // credentials: 'include',               
-                body: JSON.stringify({ ...values, user_id: loggedInUser })
+                body: JSON.stringify(updatedValues)
                 
 
 
