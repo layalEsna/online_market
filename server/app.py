@@ -93,7 +93,7 @@ class CheckSession(Resource):
 
 
 class Signup(Resource):
-    @cross_origin(supports_credentials=True)
+    
     def post(self):
 
         try:
@@ -130,7 +130,7 @@ class Signup(Resource):
             return make_response(jsonify({'error': f'Internal error: {e}'}), 500)
         
 class Login(Resource):
-    @cross_origin(supports_credentials=True)
+    
     def post(self):
         print("Received request data:", request.get_json())
 
@@ -147,7 +147,7 @@ class Login(Resource):
             
             session['user_id'] = user.id
             session.permanent = True
-            # session.modified = True
+            
 
             print("SESSION CONTENTS AFTER LOGIN:", session) 
 
@@ -157,7 +157,7 @@ class Login(Resource):
             return make_response(jsonify({'error': f'Internal error: {e}'}), 500)
         
 class Sellers(Resource):
-    @cross_origin(supports_credentials=True)
+    
     def get(self):
         print("Sellers endpoint was hit!")
 
@@ -187,7 +187,7 @@ class Sellers(Resource):
         return make_response(jsonify({'count': len(sellers_with_products), 'sellers': sellers_with_products}), 200)
 
 class ProductById(Resource):
-    @cross_origin(supports_credentials=True)
+    
     def get(self, id):
         # product = Product.query.filter(Product.id==id).first()
         product = Product.query.get(id)
@@ -196,7 +196,7 @@ class ProductById(Resource):
         return make_response(jsonify(product.to_dict()), 200)
     
 class Purchase(Resource):
-    @cross_origin(supports_credentials=True)
+    
     def post(self, product_id):
 
         data = request.get_json()
@@ -229,18 +229,20 @@ class Purchase(Resource):
 
 
 class Cart(Resource):
-    @cross_origin(supports_credentials=True)
+   
     def get(self):
         
         user_id = session.get('user_id')
         if not user_id:
             return make_response(jsonify({'error': 'User must be logged in to view the cart.'}), 401)
-
-# user.products
-        purchases = UserProduct.query.filter(UserProduct.user_id == user_id).all()
-        if not purchases:
-            return make_response(jsonify({'count': 0, 'cart': []}), 200)
         
+        user = User.query.get(user_id)
+        if not user:
+            return make_response(jsonify({'error': 'User not found'}), 404)
+        
+        if not user.user_products:
+            return make_response(jsonify({'count': 0, 'cart': []}), 200)
+                
         cart_items = [
             {
                 'id': purchase.id,
@@ -258,7 +260,7 @@ class Cart(Resource):
                 'delivery_address': purchase.delivery_address,
                 'payment_method': purchase.payment_method,
             }
-            for purchase in purchases if purchase.product is not None
+            for purchase in user.user_products if purchase.product is not None
         ]
 
         return make_response(jsonify({'count': len(cart_items), 'cart': cart_items}), 200)

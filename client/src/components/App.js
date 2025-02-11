@@ -1,17 +1,29 @@
 import React from "react";
 
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useBeforeUnload } from 'react-router-dom';
 import Signup from "./Signup";
 import Login from "./Login";
 import Seller from "./Seller";
 import ProductDetails from "./ProductDetails";
 import Cart from "./Cart";
 import NavBar from "./NavBar"
-i
+import React, { useState, useEffect } from "react";
 // import Logout from "./Logout";
 
 function App() {
-  // i need evrything here
+  // const [user, setUser] = useState(null)
+
+  // useEffect(() => {
+  //   fetch('/check_session')
+  //     .then(res => {
+  //       if (!res.ok) {
+  //       throw new Error('Failed to fetch user ID.')
+  //       }
+  //       return res.json()
+  //     })
+  //     .then(user => setUser(user))
+  //   .catch(e => console.error(e))
+  // }, [])
 
   return (
     <Router>
