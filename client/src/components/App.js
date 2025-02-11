@@ -11,19 +11,19 @@ import React, { useState, useEffect } from "react";
 // import Logout from "./Logout";
 
 function App() {
-  // const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null)
 
-  // useEffect(() => {
-  //   fetch('/check_session')
-  //     .then(res => {
-  //       if (!res.ok) {
-  //       throw new Error('Failed to fetch user ID.')
-  //       }
-  //       return res.json()
-  //     })
-  //     .then(user => setUser(user))
-  //   .catch(e => console.error(e))
-  // }, [])
+  useEffect(() => {
+    fetch('/check_session')
+      .then(res => {
+        if (!res.ok) {
+        throw new Error('Failed to fetch user ID.')
+        }
+        return res.json()
+      })
+      .then(user => setUser(user))
+    .catch(e => console.error(e))
+  }, [])
 
   return (
     <Router>
