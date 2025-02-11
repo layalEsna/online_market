@@ -79,6 +79,19 @@ def print_session():
     print("SESSION CONTENTS:", session)
 
 
+class CheckSession(Resource):
+    def get(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({'message': 'Not Authorized'}),401
+        user = User.query.get(user_id)
+        if user:
+            return jsonify({'user': user.to_dict()}), 200
+        return jsonify({'message': 'User not found.'}),404
+
+
+
+
 class Signup(Resource):
     @cross_origin(supports_credentials=True)
     def post(self):
@@ -165,6 +178,7 @@ class Sellers(Resource):
                         'price': user_product.product.price
                     }
                     for user_product in seller.user_products
+                    # 
                 ]            
             }
              for seller in sellers
@@ -217,11 +231,12 @@ class Purchase(Resource):
 class Cart(Resource):
     @cross_origin(supports_credentials=True)
     def get(self):
+        
         user_id = session.get('user_id')
         if not user_id:
             return make_response(jsonify({'error': 'User must be logged in to view the cart.'}), 401)
 
-
+# user.products
         purchases = UserProduct.query.filter(UserProduct.user_id == user_id).all()
         if not purchases:
             return make_response(jsonify({'count': 0, 'cart': []}), 200)
@@ -268,6 +283,7 @@ api.add_resource(ProductById, '/products/<int:id>')
 api.add_resource(Purchase, '/products/<int:product_id>/purchase')
 api.add_resource(Cart, '/products/purchases')
 api.add_resource(Logout, '/logout')
+api.add_resource(CheckSession, '/check_session')
 
 
 print("Route /sellers has been added!")

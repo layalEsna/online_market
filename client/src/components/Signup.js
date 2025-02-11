@@ -57,8 +57,8 @@ function Signup() {
                     if (!data || !data.id) {
                         throw new Error('Signup failed.')
                     }
-                    sessionStorage.setItem('username', values.username)
-                    localStorage.setItem('username', values.username)
+                    // sessionStorage.setItem('username', values.username)
+                    // localStorage.setItem('username', values.username)
                 navigate('/sellers')
                 })
                 .catch(e => {

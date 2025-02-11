@@ -7,9 +7,12 @@ import Seller from "./Seller";
 import ProductDetails from "./ProductDetails";
 import Cart from "./Cart";
 import NavBar from "./NavBar"
+i
 // import Logout from "./Logout";
 
 function App() {
+  // i need evrything here
+
   return (
     <Router>
       <div>
